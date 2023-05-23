@@ -31,7 +31,11 @@ class _BaseService:
         return f"{cls.BACKEND_URL}/{endpoint}"
 
     async def post(
-        self, endpoint: str, file, data: t.Optional[t.Dict] = None, headers: t.Optional[t.Dict] = None
+        self,
+        endpoint: str,
+        file,
+        data: t.Optional[t.Dict] = None,
+        headers: t.Optional[t.Dict] = None,
     ) -> t.Dict:
         url = self._get_endpoint_url(endpoint=endpoint)
         _data = {}
@@ -85,14 +89,18 @@ class CASClientService(_BaseService):
         data = {"number_of_cells": str(number_of_cells)}
         for _ in range(3):
             try:
-                results[chunk_index] = await self.post("annotate", file=adata_bytes, data=data)
+                results[chunk_index] = await self.post(
+                    "annotate", file=adata_bytes, data=data
+                )
             except exceptions.HTTPError500:
                 self._print(
                     f"Something went wrong, resubmitting chunk #{chunk_index + 1:2.0f} ({chunk_start_i:5.0f}, {chunk_end_i:5.0f}) to Cellarium CAS ..."
                 )
                 pass
             except exceptions.HTTPError401:
-                self._print("Unauthorized token. Please check your API token or request a new one.")
+                self._print(
+                    "Unauthorized token. Please check your API token or request a new one."
+                )
                 break
             else:
                 self._print(
@@ -100,7 +108,9 @@ class CASClientService(_BaseService):
                 )
                 break
 
-    async def _annotate_anndata_task(self, adata, results, chunk_size, start_time) -> None:
+    async def _annotate_anndata_task(
+        self, adata, results, chunk_size, start_time
+    ) -> None:
         i, j = 0, chunk_size
         tasks = []
         number_of_chunks = self._get_number_of_chunks(adata, chunk_size=chunk_size)
@@ -140,7 +150,9 @@ class CASClientService(_BaseService):
         results = [[] for _ in range(number_of_chunks)]
         loop = asyncio.get_event_loop()
         task = loop.create_task(
-            self._annotate_anndata_task(adata=adata, results=results, chunk_size=chunk_size, start_time=start)
+            self._annotate_anndata_task(
+                adata=adata, results=results, chunk_size=chunk_size, start_time=start
+            )
         )
         loop.run_until_complete(task)
         result = functools.reduce(operator.iconcat, results, [])
