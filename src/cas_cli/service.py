@@ -10,7 +10,7 @@ import typing as t
 import aiohttp
 import nest_asyncio
 
-from cas_cli import exceptions
+from . import exceptions
 
 if t.TYPE_CHECKING:
     import anndata
