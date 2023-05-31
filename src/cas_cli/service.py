@@ -102,6 +102,8 @@ class CASClientService(_BaseService):
                     "Unauthorized token. Please check your API token or request a new one."
                 )
                 break
+            except Exception as err:
+                raise err
             else:
                 self._print(
                     f"Received the annotations for cell chunk #{chunk_index + 1:2.0f} ({chunk_start_i:5.0f}, {chunk_end_i:5.0f}) ..."
@@ -140,7 +142,13 @@ class CASClientService(_BaseService):
             i = j
             j += chunk_size
 
-        await asyncio.wait(tasks)
+        (done, pending) = await asyncio.wait(tasks)
+        for i, task in enumerate(done):
+            err = task.exception()
+            if err is not None:
+                raise err
+        if len(pending) > 0:
+            raise TimeoutError()
 
     def annotate_anndata(self, adata: "anndata.AnnData", chunk_size=2000) -> t.List:
         start = time.time()
