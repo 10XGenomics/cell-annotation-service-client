@@ -1,7 +1,7 @@
 aiohttp[speedups]
+anndata
 nest-asyncio
 pandas
 numpy
 scipy
-scanpy[leiden]
 tqdm

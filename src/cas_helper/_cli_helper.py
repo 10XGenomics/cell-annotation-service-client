@@ -1,4 +1,4 @@
-import scanpy as sc
+from anndata import AnnData
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
@@ -12,14 +12,14 @@ from tqdm.notebook import tqdm
 
 
 def validate_adata_for_cas(
-    adata: sc.AnnData,
+    adata: AnnData,
     casp_feature_list_csv_path: str,
     int_count_matrix: str = "X",
     gene_symbols_column_name: str = "__index__",
     gene_ids_column_name: str = "gene_ids",
     missing_features_policy: str = "replace_with_zero",
     extra_features_policy: str = "ignore",
-) -> sc.AnnData:
+) -> AnnData:
 
     # we only have the following policies implemented
     assert missing_features_policy == "replace_with_zero"
@@ -84,7 +84,7 @@ def validate_adata_for_cas(
         obs = adata.obs.copy()
         obs.index = pd.Index([str(x) for x in np.arange(adata.shape[0])])
 
-        adata = sc.AnnData(
+        adata = AnnData(
             X.tocsr(),
             obs=obs,
             obsm=adata.obsm,
@@ -97,7 +97,7 @@ def validate_adata_for_cas(
 
 
 def reduce_cas_query_result_by_majority_vote(
-    adata: sc.AnnData,
+    adata: AnnData,
     cas_query_res: dict,
     output_cell_type_key: str = "cas_cell_type",
     output_cell_type_confidence_score_key: str = "cas_cell_type_confidence_score",
@@ -124,7 +124,7 @@ def reduce_cas_query_result_by_majority_vote(
 
 
 def reduce_cas_query_result_by_min_distance(
-    adata: sc.AnnData,
+    adata: AnnData,
     cas_query_res: dict,
     output_cell_type_key: str = "cas_cell_type",
     output_cell_type_min_distance_key: str = "cas_cell_type_min_distance",
@@ -147,7 +147,7 @@ def reduce_cas_query_result_by_min_distance(
 
 
 def reduce_cas_query_result_by_majority_vote_per_cluster(
-    adata: sc.AnnData,
+    adata: AnnData,
     cas_query_res: dict,
     cluster_key: str = "leiden",
     output_cell_type_key: str = "cas_per_cluster_cell_type",
@@ -207,7 +207,7 @@ def reduce_cas_query_result_by_majority_vote_per_cluster(
 
 
 def reduce_cas_query_result_by_wnn(
-    adata: sc.AnnData,
+    adata: AnnData,
     cas_query_res: dict,
     n_neighbors: int = 10,
     wnn_strategy: str = "connectivities",
