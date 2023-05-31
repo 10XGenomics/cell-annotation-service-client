@@ -1,9 +1,11 @@
 import asyncio
+import certifi
 import datetime
 import functools
 import math
 import operator
 import os
+import ssl
 import time
 import typing as t
 
@@ -17,6 +19,9 @@ if t.TYPE_CHECKING:
 
 
 nest_asyncio.apply()
+
+ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+ssl_context.load_verify_locations(certifi.where())
 
 
 class _BaseService:
@@ -53,7 +58,9 @@ class _BaseService:
             form_data.add_field(key, value)
 
         async with aiohttp.ClientSession() as session:
-            async with session.post(url, data=form_data, headers=_headers) as resp:
+            async with session.post(
+                url, data=form_data, headers=_headers, ssl=ssl_context
+            ) as resp:
                 if resp.status == 401:
                     raise exceptions.HTTPError401
                 elif resp.status == 403:

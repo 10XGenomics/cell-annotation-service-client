@@ -1,5 +1,6 @@
 aiohttp[speedups]
 anndata
+certifi
 nest-asyncio
 pandas
 numpy

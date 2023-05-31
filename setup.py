@@ -10,7 +10,7 @@ with open("README.md") as fh:
 
 # following src dir layout according to
 # https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
-version = "0.1.2"
+version = "0.1.3"
 setup(
     name="cell-annotation-service-client",
     version=version,
